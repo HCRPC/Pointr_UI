@@ -54,7 +54,7 @@ jobs:
           name: playwright-results-${{ matrix.browser }}
           path: |
             test-results/
-            playwright-report/
+            playwright-results-${{ matrix.browser }}/playwright-report/
 
       - name: Upload screenshots if tests fail
         uses: actions/upload-artifact@v4
@@ -66,7 +66,7 @@ jobs:
       - name: Publish Playwright HTML Report to Summary
         if: always()
         run: |
-          if [ -f playwright-report/index.html ]; then
+          if [ -f playwright-results-${{ matrix.browser }}/playwright-report/index.html ]; then
             echo '### Playwright HTML Report' >> $GITHUB_STEP_SUMMARY
-            echo '[View Playwright Report](./playwright-report/index.html)' >> $GITHUB_STEP_SUMMARY
+            echo '[View Playwright Report](.playwright-results-${{ matrix.browser }}/playwright-report/index.html)' >> $GITHUB_STEP_SUMMARY
           fi

@@ -158,12 +158,6 @@ The framework includes a comprehensive GitHub Actions workflow (`.github/workflo
 - Generates and publishes test reports
 - Archives word frequency analysis results
 
-
-**Usage:**
-```bash
-# Trigger manual workflow
-gh workflow run ci.yml -f browser=chromium -f test_pattern="word frequency"
-
 ```
 
 

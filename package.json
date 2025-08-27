@@ -1,0 +1,29 @@
+{
+  "name": "playwright-automation",
+  "version": "1.0.0",
+  "description": "Playwright automation framework with POM design for Pointr blog testing",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx playwright test",
+    "test:headed": "npx playwright test --headed",
+    "test:chromium": "npx playwright test --project=chromium",
+    "test:firefox": "npx playwright test --project=firefox",
+    "test:webkit": "npx playwright test --project=webkit",
+    "test:debug": "npx playwright test --debug",
+    "report": "npx playwright show-report",
+    "install:browsers": "npx playwright install"
+  },
+  "keywords": [
+    "playwright",
+    "automation",
+    "testing",
+    "pom",
+    "page-object-model"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@playwright/test": "^1.55.0",
+    "playwright": "^1.55.0"
+  }
+}

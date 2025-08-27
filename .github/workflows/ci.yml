@@ -1,0 +1,72 @@
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 5 * * *'
+  workflow_dispatch:
+    inputs:
+      test_pattern:
+        description: 'Test pattern to run (optional)'
+        required: false
+        default: ''
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        browser: [chromium, firefox]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache node modules
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Run Playwright tests
+        timeout-minutes: 3
+        run: |
+          npx playwright test --project=${{ matrix.browser }} ${{ github.event.inputs.test_pattern }}
+        env:
+          CI: true
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-results-${{ matrix.browser }}
+          path: |
+            test-results/
+            playwright-report/
+
+      - name: Upload screenshots if tests fail
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: screenshots-${{ matrix.browser }}
+          path: screenshots/
+
+      - name: Publish Playwright HTML Report to Summary
+        if: always()
+        run: |
+          if [ -f playwright-report/index.html ]; then
+            echo '### Playwright HTML Report' >> $GITHUB_STEP_SUMMARY
+            echo '[View Playwright Report](./playwright-report/index.html)' >> $GITHUB_STEP_SUMMARY
+          fi
